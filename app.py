@@ -18,7 +18,6 @@ def index():
     return render_template('pages/index.html')  # Charger la page d'accueil
 
 
-
 # Route d'inscription
 @app.route('/register', methods=['POST'])
 def register():
