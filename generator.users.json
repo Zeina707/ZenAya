@@ -1,0 +1,26 @@
+[
+  {
+    "_id": {
+      "$oid": "674628efdbb5b9ae12bed6e7"
+    },
+    "name": "Aya Zenati",
+    "email": "aya.zenati@example.com",
+    "password": "$2b$12$dADJskI8hLQdI4NaytYJsuXOsxiJTf/O6bZ2oEo.xKMVw6T8EtmCS"
+  },
+  {
+    "_id": {
+      "$oid": "674628efdbb5b9ae12bed6e8"
+    },
+    "name": "Admin",
+    "email": "admin@example.com",
+    "password": "$2b$12$0kQERiM8Hi8nBGC9uYBgDeqBovnJd/yLL7rf1nygUSGeKnNMkpf8O"
+  },
+  {
+    "_id": {
+      "$oid": "674628efdbb5b9ae12bed6e9"
+    },
+    "name": "Zeina Mokrini",
+    "email": "zeina.mokrini@example.com",
+    "password": "$2b$12$dADJskI8hLQdI4NaytYJsuXOsxiJTf/O6bZ2oEo.xKMVw6T8EtmCS"
+  }
+]

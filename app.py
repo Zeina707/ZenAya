@@ -12,10 +12,23 @@ app.secret_key = 'votre_cle_secrete'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Page principale (accueil)
-@app.route('/')
+
 @app.route('/')
 def index():
     return render_template('pages/index.html')  # Charger la page d'accueil
+#appeler l index dans le template1 2 3 same as previous stuff
+
+@app.route('/template1')
+def index_template1():
+    return render_template('views/template1/index.htm')  # acceuil template 1
+
+@app.route('/template2')
+def index_template2():
+        return render_template('views/template2/index.html')  # acceuil template 2
+
+@app.route('/template3')
+def index_template3():
+        return render_template('views/template3/index.html')  # acceuil template 3
 
 
 # Route d'inscription
