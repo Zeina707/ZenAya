@@ -20,7 +20,7 @@ def index():
 
 @app.route('/template1')
 def index_template1():
-    return render_template('views/template1/index.htm')  # acceuil template 1
+    return render_template('views/template1/index.html')  # acceuil template 1
 
 @app.route('/template2')
 def index_template2():

@@ -631,12 +631,12 @@
             <div class="col-lg-3 col-md-4">
               <div class="gallery-item">
                 <a
-                  href="views/template1/index.html"
-                  class="glightbox"
+                href="{{ url_for('index_template1') }}"
+                class="glightbox"
                   data-gallery="images-gallery"
                 >
                   <img
-                    src="views/template1/images/template.png"
+                    src="static/assets/templates/assets1/images1/template.png"
                     alt=""
                     class="img-fluid"
                     style="margin-bottom: 10px;" 
@@ -644,7 +644,7 @@
                 </a>
                 <div class="btn-group mt-2">
                   
-                  <a href="template3/index.html"
+                  <a href="{{ url_for('index_template1') }}"
                   class="glightbox"
                   data-gallery="images-gallery"
                    style="margin-right: 15px;"
@@ -660,20 +660,19 @@
             <div class="col-lg-3 col-md-4">
               <div class="gallery-item">
                 <a
-                  href="views/template2/index.html"
+                href="{{ url_for('index_template2') }}"
                   class="glightbox"
                   data-gallery="images-gallery"
                 >
                   <img
-                    src="views/template2/images/template.png"
-                    alt=""
+                  src="static/assets/templates/assets2/images2/template.png"
+                  alt=""
                     class="img-fluid"
                     style="margin-bottom: 10px;" 
                   />
                 </a>
                 <div class="btn-group mt-2">
-                  <a href="views/template2/index.html"
-                  
+                  <a href="{{ url_for('index_template2') }}"
                   class="glightbox"
                   data-gallery="images-gallery"
                    style="margin-right: 15px;"
@@ -689,19 +688,20 @@
             <div class="col-lg-3 col-md-4">
               <div class="gallery-item">
                 <a
-                  href="views/template3/index.html"
+                href="{{ url_for('index_template3') }}"
                   class="glightbox"
                   data-gallery="images-gallery"
                 >
                   <img
-                    src="views/template3/images/template.png"
-                    alt=""
+                  src="static/assets/templates/assets3/images3/template.png"
+                  alt=""
                     class="img-fluid"
                     style="margin-bottom: 10px;" 
                   />
                 </a>
                 <div class="btn-group mt-2">
-                  <a href="views/template3/index.html"
+                  <a href="{{ url_for('index_template3') }}"
+
                   class="glightbox"
                   data-gallery="images-gallery"
                    style="margin-right: 15px;"
