@@ -931,7 +931,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 
     <script>
-
 $(document).ready(function() {
     // Store original iframe content and customization state
     let iframe = document.getElementById('templatePreview');
@@ -1449,11 +1448,14 @@ $(document).ready(function() {
         alert('Preview would open a new tab with all customizations applied');
     });
     
-    // Generate ZIP button
+    // Generate ZIP button - FIXED VERSION
     $('#generateZipBtn').click(function() {
         console.log("Generate ZIP button clicked");
         // Clear previous inputs
-        $('#zipForm input[name^="customization"]').remove();
+        $('#zipForm').empty();
+        
+        // Add template_id
+        $('#zipForm').append(`<input type="hidden" name="template_id" value="${$('#zipForm').data('template-id') || 1}">`);
         
         // Add removed elements
         removedElements.forEach(function(elementId) {
@@ -1462,8 +1464,12 @@ $(document).ready(function() {
         
         // Add modified elements
         for (const [elementId, modifications] of Object.entries(modifiedElements)) {
-            $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][text]" value="${modifications.text}">`);
-            $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][style]" value="${modifications.style}">`);
+            if (modifications.text) {
+                $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][text]" value="${modifications.text.replace(/"/g, '&quot;')}">`);
+            }
+            if (modifications.style) {
+                $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][style]" value="${modifications.style.replace(/"/g, '&quot;')}">`);
+            }
         }
         
         // Add colors
@@ -1473,14 +1479,13 @@ $(document).ready(function() {
         
         // Add fonts
         for (const [fontType, fontValue] of Object.entries(selectedFonts)) {
-            $('#zipForm').append(`<input type="hidden" name="customization[fonts][${fontType}]" value="${fontValue}">`);
+            $('#zipForm').append(`<input type="hidden" name="customization[fonts][${fontType}]" value="${fontValue.replace(/"/g, '&quot;')}">`);
         }
         
-        // Add media modifications (would normally include file upload handling)
-        for (const [mediaName, mediaData] of Object.entries(modifiedMedia)) {
-            $('#zipForm').append(`<input type="hidden" name="customization[media][${mediaName}][action]" value="${mediaData.action}">`);
-            // In a real implementation, file data would be handled via FormData/AJAX
-        }
+        // Media modifications (would normally include file upload handling)
+        // For actual implementation, you'd need to use FormData and AJAX for file uploads
+        
+        console.log("Form data prepared:", $('#zipForm').serializeArray());
         
         // Submit the form
         $('#zipForm').submit();
