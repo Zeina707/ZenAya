@@ -1,941 +1,471 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Advanced Template Customizer</title>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
     <style>
+        .element-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .element-actions button {
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .element-actions button:hover {
+            opacity: 0.8;
+        }
+
+        .btn-trash {
+            color: #dc3545;
+        }
+
+        .btn-trash:hover {
+            color: #c82333;
+            transform: scale(1.1);
+            transition: transform 0.2s;
+        }
 
         .template-preview {
-
             border: 1px solid #ddd;
-
             padding: 15px;
-
             margin-bottom: 20px;
-
             position: relative;
-
             height: 600px;
-
             overflow: auto;
-
         }
-
         
-
         .template-preview iframe {
-
             width: 100%;
-
             height: 100%;
-
             border: none;
-
         }
-
         
-
         .controls {
-
             background: #f8f9fa;
-
             padding: 15px;
-
             border-radius: 5px;
-
             margin-bottom: 20px;
-
         }
-
         
-
         .element-list {
-
             max-height: 500px;
-
             overflow-y: auto;
-
         }
-
         
-
         .element-category {
-
             margin-bottom: 15px;
-
         }
-
         
-
         .element-category-header {
-
             background: #e9ecef;
-
             padding: 8px 12px;
-
             border-radius: 4px;
-
             margin-bottom: 8px;
-
             cursor: pointer;
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
         }
-
         
-
         .element-items {
-
             padding-left: 15px;
-
         }
-
         
-
         .removable-element {
-
-            cursor: pointer;
-
+            cursor: default;
             padding: 8px;
-
             margin: 5px 0;
-
             background: #fff;
-
             border: 1px solid #ddd;
-
             border-radius: 4px;
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
         }
-
         
-
         .removable-element:hover {
-
             background: #f1f1f1;
-
         }
-
         
-
-        .removable-element.selected {
-
-            background: #d4edda;
-
-            border-color: #c3e6cb;
-
+        .removable-element.removed {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            text-decoration: line-through;
+            opacity: 0.7;
         }
-
         
-
         .preview-controls {
-
             margin-top: 10px;
-
             display: flex;
-
             justify-content: space-between;
-
         }
-
         
-
         .tab-content {
-
             padding-top: 15px;
-
         }
-
         
-
         .color-option {
-
             width: 25px;
-
             height: 25px;
-
             border-radius: 50%;
-
             display: inline-block;
-
             margin: 0 5px;
-
             cursor: pointer;
-
             border: 2px solid transparent;
-
         }
-
         
-
         .color-option.selected {
-
             border-color: #333;
-
         }
-
         
-
         .media-item {
-
             border: 1px solid #ddd;
-
             padding: 10px;
-
             margin-bottom: 10px;
-
             border-radius: 4px;
-
         }
-
         
-
         .media-item img {
-
             max-width: 100%;
-
             height: auto;
-
             margin-bottom: 10px;
-
         }
-
         
-
         .media-controls {
-
             display: flex;
-
             justify-content: space-between;
-
         }
-
-    </style>
-
-</head>
-
-<body>
-
-    <div class="container-fluid mt-4">
-
-        <h1 class="mb-4">Advanced Template Customizer</h1>
-
         
-
+        .btn-restore {
+            color: #28a745;
+        }
+        
+        .btn-restore:hover {
+            color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <h1 class="mb-4">Advanced Template Customizer</h1>
+        
         <div class="row">
-
             <div class="col-md-8">
-
                 <div class="template-preview" id="previewContainer">
-
                     <iframe id="templatePreview" src="/template1"></iframe>
-
                 </div>
-
                 
-
                 <div class="preview-controls">
-
                     <button class="btn btn-secondary" id="resetBtn">Reset Changes</button>
-
                     <div>
-
                         <button class="btn btn-success me-2" id="previewBtn">Preview</button>
-
                         <button class="btn btn-primary" id="generateZipBtn">Generate ZIP</button>
-
                     </div>
-
                 </div>
-
             </div>
-
             
-
             <div class="col-md-4">
-
                 <div class="controls">
-
                     <ul class="nav nav-tabs" id="customizeTabs" role="tablist">
-
                         <li class="nav-item" role="presentation">
-
                             <button class="nav-link active" id="elements-tab" data-bs-toggle="tab" data-bs-target="#elements" type="button" role="tab">Elements</button>
-
                         </li>
-
                         <li class="nav-item" role="presentation">
-
                             <button class="nav-link" id="colors-tab" data-bs-toggle="tab" data-bs-target="#colors" type="button" role="tab">Colors</button>
-
                         </li>
-
                         <li class="nav-item" role="presentation">
-
                             <button class="nav-link" id="media-tab" data-bs-toggle="tab" data-bs-target="#media" type="button" role="tab">Media</button>
-
                         </li>
-
                         <li class="nav-item" role="presentation">
-
                             <button class="nav-link" id="fonts-tab" data-bs-toggle="tab" data-bs-target="#fonts" type="button" role="tab">Fonts</button>
-
                         </li>
-
                     </ul>
-
                     
-
                     <div class="tab-content" id="customizeTabsContent">
-
                         <!-- Elements Tab -->
-
                         <div class="tab-pane fade show active" id="elements" role="tabpanel">
-
                             <div class="mb-3">
-
                                 <input type="text" class="form-control" id="elementSearch" placeholder="Search elements...">
-
                             </div>
-
                             
-
                             <div class="element-list" id="elementList">
-
                                 <!-- Header Elements -->
-
                                 <div class="element-category">
-
                                     <div class="element-category-header" data-bs-toggle="collapse" data-bs-target="#headerElements">
-
                                         <span>Header</span>
-
                                         <i class="fas fa-chevron-down"></i>
-
                                     </div>
-
                                     <div class="collapse show element-items" id="headerElements">
-
                                         <div class="removable-element" data-element-id="header-logo">
-
                                             <span>Logo</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="header-nav">
-
                                             <span>Navigation Menu</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="header-cta">
-
                                             <span>Call-to-Action Button</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                                 
-
                                 <!-- Hero Section Elements -->
-
                                 <div class="element-category">
-
                                     <div class="element-category-header" data-bs-toggle="collapse" data-bs-target="#heroElements">
-
                                         <span>Hero Section</span>
-
                                         <i class="fas fa-chevron-down"></i>
-
                                     </div>
-
                                     <div class="collapse show element-items" id="heroElements">
-
                                         <div class="removable-element" data-element-id="hero-heading">
-
                                             <span>Main Heading</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="hero-subheading">
-
                                             <span>Subheading</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="hero-image">
-
                                             <span>Hero Image</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="hero-cta">
-
                                             <span>Call-to-Action Button</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                                 
-
                                 <!-- About Section Elements -->
-
                                 <div class="element-category">
-
                                     <div class="element-category-header" data-bs-toggle="collapse" data-bs-target="#aboutElements">
-
                                         <span>About Section</span>
-
                                         <i class="fas fa-chevron-down"></i>
-
                                     </div>
-
                                     <div class="collapse show element-items" id="aboutElements">
-
                                         <div class="removable-element" data-element-id="about-heading">
-
                                             <span>Heading</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="about-text">
-
                                             <span>Description Text</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="about-image">
-
                                             <span>Image</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                                 
-
-                                <!-- Additional sections similar to above -->
-
+                                <!-- Footer Elements -->
                                 <div class="element-category">
-
                                     <div class="element-category-header" data-bs-toggle="collapse" data-bs-target="#footerElements">
-
                                         <span>Footer</span>
-
                                         <i class="fas fa-chevron-down"></i>
-
                                     </div>
-
                                     <div class="collapse show element-items" id="footerElements">
-
                                         <div class="removable-element" data-element-id="footer-logo">
-
                                             <span>Logo</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="footer-links">
-
                                             <span>Navigation Links</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="footer-social">
-
                                             <span>Social Media Icons</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                         <div class="removable-element" data-element-id="footer-copyright">
-
                                             <span>Copyright Text</span>
-
-                                            <div>
-
-                                                <i class="fas fa-eye"></i>
-
-                                                <i class="fas fa-edit ms-2"></i>
-
+                                            <div class="element-actions">
+                                                <button class="btn-trash"><i class="fas fa-trash-alt"></i></button>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                         
-
                         <!-- Colors Tab -->
-
                         <div class="tab-pane fade" id="colors" role="tabpanel">
-
                             <h5>Primary Color</h5>
-
                             <div class="mb-3">
-
                                 <div class="color-option selected" style="background-color: #4e73df;" data-color="#4e73df"></div>
-
                                 <div class="color-option" style="background-color: #1cc88a;" data-color="#1cc88a"></div>
-
                                 <div class="color-option" style="background-color: #36b9cc;" data-color="#36b9cc"></div>
-
                                 <div class="color-option" style="background-color: #f6c23e;" data-color="#f6c23e"></div>
-
                                 <div class="color-option" style="background-color: #e74a3b;" data-color="#e74a3b"></div>
-
                                 <div class="color-option" style="background-color: #5a5c69;" data-color="#5a5c69"></div>
-
                                 <input type="color" id="customPrimaryColor" class="form-control form-control-sm mt-2" value="#4e73df">
-
                             </div>
-
                             
-
                             <h5>Secondary Color</h5>
-
                             <div class="mb-3">
-
                                 <div class="color-option selected" style="background-color: #858796;" data-color="#858796"></div>
-
                                 <div class="color-option" style="background-color: #f8f9fc;" data-color="#f8f9fc"></div>
-
                                 <div class="color-option" style="background-color: #e3e6f0;" data-color="#e3e6f0"></div>
-
                                 <div class="color-option" style="background-color: #d1d3e2;" data-color="#d1d3e2"></div>
-
                                 <div class="color-option" style="background-color: #b7b9cc;" data-color="#b7b9cc"></div>
-
                                 <input type="color" id="customSecondaryColor" class="form-control form-control-sm mt-2" value="#858796">
-
                             </div>
-
                             
-
                             <h5>Background Color</h5>
-
                             <div>
-
                                 <div class="color-option selected" style="background-color: #ffffff;" data-color="#ffffff"></div>
-
                                 <div class="color-option" style="background-color: #f8f9fc;" data-color="#f8f9fc"></div>
-
                                 <div class="color-option" style="background-color: #f0f0f0;" data-color="#f0f0f0"></div>
-
                                 <div class="color-option" style="background-color: #eeeeee;" data-color="#eeeeee"></div>
-
                                 <input type="color" id="customBgColor" class="form-control form-control-sm mt-2" value="#ffffff">
-
                             </div>
-
                         </div>
-
                         
-
                         <!-- Media Tab -->
-
                         <div class="tab-pane fade" id="media" role="tabpanel">
-
                             <div class="mb-3">
-
                                 <label for="uploadMedia" class="form-label">Upload New Media</label>
-
                                 <input class="form-control" type="file" id="uploadMedia">
-
                                 <button class="btn btn-outline-primary btn-sm mt-2" id="uploadBtn">Upload</button>
-
                             </div>
-
                             
-
                             <h5 class="mb-3">Template Media</h5>
-
                             <div id="mediaList">
-
                                 <div class="media-item">
-
                                     <img src="/api/placeholder/150/100" alt="Hero Image">
-
                                     <div class="media-controls">
-
                                         <span>hero-image.jpg</span>
-
                                         <div>
-
                                             <button class="btn btn-sm btn-outline-primary replace-media">Replace</button>
-
                                             <button class="btn btn-sm btn-outline-danger ms-2 remove-media">Remove</button>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                                 
-
                                 <div class="media-item">
-
                                     <img src="/api/placeholder/150/100" alt="About Image">
-
                                     <div class="media-controls">
-
                                         <span>about-image.jpg</span>
-
                                         <div>
-
                                             <button class="btn btn-sm btn-outline-primary replace-media">Replace</button>
-
                                             <button class="btn btn-sm btn-outline-danger ms-2 remove-media">Remove</button>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                                 
-
                                 <div class="media-item">
-
                                     <img src="/api/placeholder/150/100" alt="Logo">
-
                                     <div class="media-controls">
-
                                         <span>logo.png</span>
-
                                         <div>
-
                                             <button class="btn btn-sm btn-outline-primary replace-media">Replace</button>
-
                                             <button class="btn btn-sm btn-outline-danger ms-2 remove-media">Remove</button>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                         
-
                         <!-- Fonts Tab -->
-
                         <div class="tab-pane fade" id="fonts" role="tabpanel">
-
                             <div class="mb-3">
-
                                 <label for="headingFont" class="form-label">Heading Font</label>
-
                                 <select class="form-select" id="headingFont">
-
                                     <option value="Arial, sans-serif">Arial</option>
-
                                     <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
-
                                     <option value="'Open Sans', sans-serif" selected>Open Sans</option>
-
                                     <option value="'Roboto', sans-serif">Roboto</option>
-
                                     <option value="'Montserrat', sans-serif">Montserrat</option>
-
                                     <option value="'Lato', sans-serif">Lato</option>
-
                                     <option value="Georgia, serif">Georgia</option>
-
                                     <option value="'Times New Roman', Times, serif">Times New Roman</option>
-
                                 </select>
-
                             </div>
-
                             
-
                             <div class="mb-3">
-
                                 <label for="bodyFont" class="form-label">Body Font</label>
-
                                 <select class="form-select" id="bodyFont">
-
                                     <option value="Arial, sans-serif">Arial</option>
-
                                     <option value="'Helvetica Neue', Helvetica, sans-serif" selected>Helvetica</option>
-
                                     <option value="'Open Sans', sans-serif">Open Sans</option>
-
                                     <option value="'Roboto', sans-serif">Roboto</option>
-
                                     <option value="'Montserrat', sans-serif">Montserrat</option>
-
                                     <option value="'Lato', sans-serif">Lato</option>
-
                                     <option value="Georgia, serif">Georgia</option>
-
                                     <option value="'Times New Roman', Times, serif">Times New Roman</option>
-
                                 </select>
-
                             </div>
-
                             
-
                             <div class="mb-3">
-
                                 <label for="headingSize" class="form-label">Heading Size</label>
-
                                 <div class="input-group">
-
                                     <input type="range" class="form-range" id="headingSize" min="16" max="72" value="32">
-
                                     <span class="ms-2" id="headingSizeValue">32px</span>
-
                                 </div>
-
                             </div>
-
                             
-
                             <div class="mb-3">
-
                                 <label for="bodySize" class="form-label">Body Text Size</label>
-
                                 <div class="input-group">
-
                                     <input type="range" class="form-range" id="bodySize" min="12" max="24" value="16">
-
                                     <span class="ms-2" id="bodySizeValue">16px</span>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
                 
-
-                <!-- Element Edit Modal -->
-
-                <div class="modal fade" id="editElementModal" tabindex="-1" aria-hidden="true">
-
-                    <div class="modal-dialog">
-
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-
-                                <h5 class="modal-title" id="editElementTitle">Edit Element</h5>
-
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-                            </div>
-
-                            <div class="modal-body">
-
-                                <div class="mb-3">
-
-                                    <label for="elementText" class="form-label">Text Content</label>
-
-                                    <input type="text" class="form-control" id="elementText">
-
-                                </div>
-
-                                <div class="mb-3">
-
-                                    <label for="elementStyle" class="form-label">Custom CSS</label>
-
-                                    <textarea class="form-control" id="elementStyle" rows="3"></textarea>
-
-                                </div>
-
-                            </div>
-
-                            <div class="modal-footer">
-
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-
-                                <button type="button" class="btn btn-primary" id="saveElementChanges">Save Changes</button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                
-
                 <form id="zipForm" action="/generate-zip" method="post" style="display:none;">
-
                     <input type="hidden" name="template_id" value="1">
-
                     <!-- Hidden inputs for customization options will be added dynamically -->
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
     
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-
     <script>
 $(document).ready(function() {
     // Store original iframe content and customization state
     let iframe = document.getElementById('templatePreview');
     let removedElements = [];
-    let modifiedElements = {};
     let selectedColors = {
         primary: '#4e73df',
         secondary: '#858796',
@@ -950,7 +480,6 @@ $(document).ready(function() {
     let modifiedMedia = {};
     
     // Initialize customizer functionality
-    // We need to ensure the iframe is fully loaded before initializing
     if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
         initializeCustomizer();
     } else {
@@ -962,81 +491,31 @@ $(document).ready(function() {
     function initializeCustomizer() {
         console.log("Initializing customizer...");
         
-        // Initialize element toggle functionality with delegated events
-        $(document).on('click', '.removable-element', function() {
-            $(this).toggleClass('selected');
-            const elementId = $(this).data('element-id');
-            console.log("Element clicked:", elementId);
-            
-            // Toggle visibility when selecting/deselecting element
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const element = iframeDoc.getElementById(elementId);
-            
-            if (element) {
-                // This is the actual fix - toggle visibility in the iframe
-                if ($(this).hasClass('selected')) {
-                    // Element selected for removal - hide it
-                    element.style.display = 'none';
-                    if (!removedElements.includes(elementId)) {
-                        removedElements.push(elementId);
-                    }
-                } else {
-                    // Element deselected - show it again
-                    element.style.display = '';
-                    removedElements = removedElements.filter(id => id !== elementId);
-                }
-            }
-        });
-        
-        // Eye icon click handler (visibility toggle)
-        $(document).on('click', '.fa-eye', function(e) {
+        // Trash button click handler
+        $(document).on('click', '.btn-trash', function(e) {
+            e.preventDefault();
             e.stopPropagation();
-            const elementId = $(this).closest('.removable-element').data('element-id');
-            console.log("Eye icon clicked for:", elementId);
+            const elementItem = $(this).closest('.removable-element');
+            const elementId = elementItem.data('element-id');
             
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             const element = iframeDoc.getElementById(elementId);
             
             if (element) {
-                if (element.style.display === 'none') {
-                    // Show element
+                const icon = $(this).find('i');
+                if (elementItem.hasClass('removed')) {
                     element.style.display = '';
-                    $(this).removeClass('text-muted');
-                    $(this).closest('.removable-element').removeClass('selected');
+                    elementItem.removeClass('removed');
+                    icon.removeClass('fa-undo').addClass('fa-trash-alt');
                     removedElements = removedElements.filter(id => id !== elementId);
                 } else {
-                    // Hide element
                     element.style.display = 'none';
-                    $(this).addClass('text-muted');
-                    $(this).closest('.removable-element').addClass('selected');
+                    elementItem.addClass('removed');
+                    icon.removeClass('fa-trash-alt').addClass('fa-undo');
                     if (!removedElements.includes(elementId)) {
                         removedElements.push(elementId);
                     }
                 }
-            }
-        });
-        
-        // Edit icon click handler
-        $(document).on('click', '.fa-edit', function(e) {
-            e.stopPropagation();
-            const elementId = $(this).closest('.removable-element').data('element-id');
-            console.log("Edit icon clicked for:", elementId);
-            
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const element = iframeDoc.getElementById(elementId);
-            
-            if (element) {
-                // Populate modal with element content
-                $('#editElementTitle').text(`Edit ${$(this).closest('.removable-element').find('span').text()}`);
-                $('#elementText').val(element.textContent || '');
-                $('#elementStyle').val(modifiedElements[elementId]?.style || '');
-                
-                // Store current element ID to use when saving
-                $('#editElementModal').data('element-id', elementId);
-                
-                // Show modal
-                const editModal = new bootstrap.Modal(document.getElementById('editElementModal'));
-                editModal.show();
             }
         });
         
@@ -1086,43 +565,6 @@ $(document).ready(function() {
             }
         });
         
-        // Save element changes
-        $('#saveElementChanges').click(function() {
-            const elementId = $('#editElementModal').data('element-id');
-            const newText = $('#elementText').val();
-            const newStyle = $('#elementStyle').val();
-            console.log("Saving changes for:", elementId);
-            
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const element = iframeDoc.getElementById(elementId);
-            
-            if (element) {
-                // Update text content if it's not empty
-                if (newText.trim() !== '') {
-                    element.textContent = newText;
-                }
-                
-                // Apply custom styles
-                if (newStyle.trim() !== '') {
-                    element.style.cssText += newStyle;
-                }
-                
-                // Store modifications
-                modifiedElements[elementId] = {
-                    text: newText,
-                    style: newStyle
-                };
-            }
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editElementModal'));
-            if (modal) {
-                modal.hide();
-            } else {
-                $('#editElementModal').modal('hide');
-            }
-        });
-        
         // Color options
         $(document).on('click', '.color-option', function() {
             const colorSection = $(this).closest('div').prev('h5');
@@ -1143,356 +585,394 @@ $(document).ready(function() {
         
         // Custom color inputs
         $('input[type="color"]').on('change', function() {
-            const colorType = $(this).attr('id').replace('custom', '').replace('Color', '').toLowerCase();
+            const colorType = this.id.replace('custom', '').replace('Color', '').toLowerCase();
             const color = $(this).val();
             console.log("Custom color changed:", colorType, color);
             
-            // Deselect preset colors
-            $(this).siblings('.color-option').removeClass('selected');
+            // Update selected color
+            selectedColors[colorType] = color;
             
             // Apply color to template
             applyColorToTemplate(colorType, color);
         });
         
-        // Font selectors
-        $('#headingFont, #bodyFont').on('change', function() {
-            const fontType = $(this).attr('id').replace('Font', '');
-            const fontFamily = $(this).val();
-            console.log("Font changed:", fontType, fontFamily);
-            
-            // Update selected fonts
-            selectedFonts[fontType] = fontFamily;
-            
-            // Apply fonts to template
-            applyFontsToTemplate();
-        });
-        
-        // Font size sliders
-        $('#headingSize, #bodySize').on('input', function() {
-            const sizeType = $(this).attr('id').replace('Size', '');
-            const size = $(this).val() + 'px';
-            console.log("Font size changed:", sizeType, size);
-            
-            // Update display value
-            $(`#${sizeType}SizeValue`).text(size);
-            
-            // Update selected fonts
-            selectedFonts[sizeType + 'Size'] = size;
-            
-            // Apply fonts to template
-            applyFontsToTemplate();
-        });
-        
-        // Media replace/remove buttons with delegated events
-        $(document).on('click', '.replace-media', function() {
-            const mediaItem = $(this).closest('.media-item');
-            const mediaName = mediaItem.find('span').text();
-            console.log("Replace media clicked:", mediaName);
-            
-            // Trigger file upload dialog
-            $('#uploadMedia').click();
-            
-            // Store the media being replaced
-            $('#uploadMedia').data('replace-media', mediaName);
-        });
-        
-        $(document).on('click', '.remove-media', function() {
-            const mediaItem = $(this).closest('.media-item');
-            const mediaName = mediaItem.find('span').text();
-            console.log("Remove media clicked:", mediaName);
-            
-            // Store removal in modification list
-            modifiedMedia[mediaName] = { action: 'remove' };
-            
-            // Visual feedback
-            mediaItem.addClass('opacity-50');
-            $(this).text('Restore').removeClass('btn-outline-danger').addClass('btn-outline-success');
-            $(this).removeClass('remove-media').addClass('restore-media');
-            
-            // Actually remove the image from the iframe if possible
+        // Apply color to template elements
+        function applyColorToTemplate(colorType, color) {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const imageElements = iframeDoc.querySelectorAll('img');
-            imageElements.forEach(img => {
-                const src = img.src;
-                if (src.includes(mediaName) || img.alt === mediaName) {
-                    // Hide the image
-                    img.style.display = 'none';
-                }
-            });
-        });
-        
-        // Media upload button
-        $('#uploadBtn').click(function() {
-            console.log("Upload button clicked");
-            const fileInput = document.getElementById('uploadMedia');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const replaceMedia = $('#uploadMedia').data('replace-media');
-                
-                if (replaceMedia) {
-                    // Handle replacement
-                    modifiedMedia[replaceMedia] = {
-                        action: 'replace',
-                        file: file
-                    };
+            
+            switch(colorType) {
+                case 'primary':
+                    selectedColors.primary = color;
                     
-                    // Update UI to show replacement
-                    $(`#mediaList .media-item span:contains('${replaceMedia}')`).closest('.media-item')
-                        .find('img').attr('src', URL.createObjectURL(file));
-                    
-                    // Update the image in the iframe if possible
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const imageElements = iframeDoc.querySelectorAll('img');
-                    const fileUrl = URL.createObjectURL(file);
-                    
-                    imageElements.forEach(img => {
-                        const src = img.src;
-                        if (src.includes(replaceMedia) || img.alt === replaceMedia) {
-                            img.src = fileUrl;
-                            img.style.display = ''; // Make sure it's visible
+                    // Update primary colored elements
+                    const primaryElements = iframeDoc.querySelectorAll('.btn-primary, .primary-color, .primary-bg');
+                    primaryElements.forEach(el => {
+                        if(el.classList.contains('primary-bg')) {
+                            el.style.backgroundColor = color;
+                        } else if(el.classList.contains('primary-color')) {
+                            el.style.color = color;
+                        } else {
+                            el.style.backgroundColor = color;
+                            el.style.borderColor = color;
                         }
                     });
+                    break;
                     
-                    // Clear data attribute
-                    $('#uploadMedia').removeData('replace-media');
-                } else {
-                    // Handle new upload
-                    const newMediaName = file.name;
-                    modifiedMedia[newMediaName] = {
-                        action: 'add',
-                        file: file
-                    };
+                case 'secondary':
+                    selectedColors.secondary = color;
                     
-                    // Add to media list
-                    const newMediaItem = `
-                        <div class="media-item">
-                            <img src="${URL.createObjectURL(file)}" alt="${newMediaName}">
-                            <div class="media-controls">
-                                <span>${newMediaName}</span>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-primary replace-media">Replace</button>
-                                    <button class="btn btn-sm btn-outline-danger ms-2 remove-media">Remove</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    $('#mediaList').append(newMediaItem);
-                }
-                
-                // Reset file input
-                fileInput.value = '';
+                    // Update secondary colored elements
+                    const secondaryElements = iframeDoc.querySelectorAll('.btn-secondary, .secondary-color, .secondary-bg');
+                    secondaryElements.forEach(el => {
+                        if(el.classList.contains('secondary-bg')) {
+                            el.style.backgroundColor = color;
+                        } else if(el.classList.contains('secondary-color')) {
+                            el.style.color = color;
+                        } else {
+                            el.style.backgroundColor = color;
+                            el.style.borderColor = color;
+                        }
+                    });
+                    break;
+                    
+                case 'background':
+                    selectedColors.background = color;
+                    
+                    // Update background colored elements
+                    iframeDoc.body.style.backgroundColor = color;
+                    const bgElements = iframeDoc.querySelectorAll('.bg-light, .background-color');
+                    bgElements.forEach(el => {
+                        el.style.backgroundColor = color;
+                    });
+                    break;
             }
+        }
+        
+        // Font controls
+        $('#headingFont').on('change', function() {
+            const fontFamily = $(this).val();
+            console.log("Heading font changed:", fontFamily);
+            selectedFonts.heading = fontFamily;
+            applyFontsToTemplate();
         });
         
-        // Restore media functionality (delegated event for dynamically added elements)
+        $('#bodyFont').on('change', function() {
+            const fontFamily = $(this).val();
+            console.log("Body font changed:", fontFamily);
+            selectedFonts.body = fontFamily;
+            applyFontsToTemplate();
+        });
+        
+        $('#headingSize').on('input', function() {
+            const size = $(this).val() + 'px';
+            $('#headingSizeValue').text(size);
+            selectedFonts.headingSize = size;
+            applyFontsToTemplate();
+        });
+        
+        $('#bodySize').on('input', function() {
+            const size = $(this).val() + 'px';
+            $('#bodySizeValue').text(size);
+            selectedFonts.bodySize = size;
+            applyFontsToTemplate();
+        });
+        
+        function applyFontsToTemplate() {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            // Apply heading fonts
+            const headings = iframeDoc.querySelectorAll('h1, h2, h3, h4, h5, h6, .heading-font');
+            headings.forEach(el => {
+                el.style.fontFamily = selectedFonts.heading;
+                el.style.fontSize = selectedFonts.headingSize;
+            });
+            
+            // Apply body fonts
+            const bodyElements = iframeDoc.querySelectorAll('p, span, a, div:not(.heading-font), li');
+            bodyElements.forEach(el => {
+                // Skip elements that already have heading font applied
+                if(!el.classList.contains('heading-font') && 
+                   !el.closest('h1, h2, h3, h4, h5, h6, .heading-font')) {
+                    el.style.fontFamily = selectedFonts.body;
+                    el.style.fontSize = selectedFonts.bodySize;
+                }
+            });
+        }
+        
+        // Media handling
+        $('.replace-media').click(function() {
+            const mediaItem = $(this).closest('.media-item');
+            const mediaName = mediaItem.find('span').text();
+            console.log("Replace media clicked for:", mediaName);
+            
+            // Trigger file input click
+            $('#uploadMedia').click();
+            
+            // Store reference to current media item for later use
+            $('#uploadMedia').data('target-media', mediaName);
+        });
+        
+        $('.remove-media').click(function() {
+            const mediaItem = $(this).closest('.media-item');
+            const mediaName = mediaItem.find('span').text();
+            console.log("Remove media clicked for:", mediaName);
+            
+            // Mark media as removed in UI
+            mediaItem.addClass('removed');
+            $(this).text('Restore').removeClass('btn-outline-danger remove-media').addClass('btn-outline-success restore-media');
+            
+            // Update iframe - find and hide all instances of this image
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const images = iframeDoc.querySelectorAll(`img[src*="${mediaName}"], img[alt="${mediaName}"]`);
+            images.forEach(img => {
+                img.style.display = 'none';
+            });
+            
+            // Add to modified media
+            modifiedMedia[mediaName] = {
+                action: 'remove'
+            };
+        });
+        
+        // Restore removed media
         $(document).on('click', '.restore-media', function() {
             const mediaItem = $(this).closest('.media-item');
             const mediaName = mediaItem.find('span').text();
-            console.log("Restore media clicked:", mediaName);
+            console.log("Restore media clicked for:", mediaName);
             
-            // Remove from modification list
-            delete modifiedMedia[mediaName];
+            // Update UI
+            mediaItem.removeClass('removed');
+            $(this).text('Remove').removeClass('btn-outline-success restore-media').addClass('btn-outline-danger remove-media');
             
-            // Visual feedback
-            mediaItem.removeClass('opacity-50');
-            $(this).text('Remove').removeClass('btn-outline-success').addClass('btn-outline-danger');
-            $(this).removeClass('restore-media').addClass('remove-media');
-            
-            // Restore the image in the iframe if possible
+            // Update iframe - restore all instances of this image
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const imageElements = iframeDoc.querySelectorAll('img');
-            imageElements.forEach(img => {
-                const src = img.src;
-                if (src.includes(mediaName) || img.alt === mediaName) {
-                    // Show the image again
-                    img.style.display = '';
-                }
+            const images = iframeDoc.querySelectorAll(`img[src*="${mediaName}"], img[alt="${mediaName}"]`);
+            images.forEach(img => {
+                img.style.display = '';
             });
-        });
-    }
-    
-    function applyColorToTemplate(type, color) {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        // Store selected color
-        selectedColors[type] = color;
-        
-        // Apply colors based on type
-        switch(type) {
-            case 'primary':
-                // Apply to primary elements (buttons, accents, etc.)
-                const primaryElements = iframeDoc.querySelectorAll('.btn-primary, .primary-color, .navbar, .bg-primary');
-                primaryElements.forEach(el => {
-                    el.style.backgroundColor = color;
-                    el.style.borderColor = color;
-                });
-                
-                // Apply to text elements
-                const primaryTextElements = iframeDoc.querySelectorAll('.text-primary');
-                primaryTextElements.forEach(el => {
-                    el.style.color = color;
-                });
-                break;
-                
-            case 'secondary':
-                // Apply to secondary elements
-                const secondaryElements = iframeDoc.querySelectorAll('.btn-secondary, .secondary-color, .bg-secondary');
-                secondaryElements.forEach(el => {
-                    el.style.backgroundColor = color;
-                    el.style.borderColor = color;
-                });
-                
-                // Apply to text elements
-                const secondaryTextElements = iframeDoc.querySelectorAll('.text-secondary');
-                secondaryTextElements.forEach(el => {
-                    el.style.color = color;
-                });
-                break;
-                
-            case 'background':
-                // Apply to body and background elements
-                if (iframeDoc.body) {
-                    iframeDoc.body.style.backgroundColor = color;
+            
+            // Remove from modified media or update action
+            if(modifiedMedia[mediaName]) {
+                if(modifiedMedia[mediaName].action === 'remove') {
+                    delete modifiedMedia[mediaName];
+                } else {
+                    modifiedMedia[mediaName].action = 'replace';
                 }
-                const bgElements = iframeDoc.querySelectorAll('.bg-light, .bg-white');
-                bgElements.forEach(el => {
-                    el.style.backgroundColor = color;
-                });
-                break;
-        }
-    }
-    
-    function applyFontsToTemplate() {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (!iframeDoc) return;
-        
-        // Create style element if it doesn't exist
-        let styleEl = iframeDoc.getElementById('custom-fonts');
-        if (!styleEl) {
-            styleEl = iframeDoc.createElement('style');
-            styleEl.id = 'custom-fonts';
-            iframeDoc.head.appendChild(styleEl);
-        }
-        
-        // Define CSS rules
-        const css = `
-            h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-                font-family: ${selectedFonts.heading} !important;
             }
-            
-            h1, .h1 { font-size: ${selectedFonts.headingSize} !important; }
-            h2, .h2 { font-size: calc(${selectedFonts.headingSize} * 0.8) !important; }
-            h3, .h3 { font-size: calc(${selectedFonts.headingSize} * 0.7) !important; }
-            h4, .h4 { font-size: calc(${selectedFonts.headingSize} * 0.6) !important; }
-            
-            body, p, div, span, a, input, button, textarea, select, .body-text {
-                font-family: ${selectedFonts.body} !important;
-            }
-            
-            body, p, .body-text {
-                font-size: ${selectedFonts.bodySize} !important;
-            }
-        `;
-        
-        // Apply CSS
-        styleEl.textContent = css;
-    }
-    
-    // Reset button
-    $('#resetBtn').click(function() {
-        console.log("Reset button clicked");
-        // Clear stored changes
-        removedElements = [];
-        modifiedElements = {};
-        selectedColors = {
-            primary: '#4e73df',
-            secondary: '#858796',
-            background: '#ffffff'
-        };
-        selectedFonts = {
-            heading: "'Open Sans', sans-serif",
-            body: "'Helvetica Neue', Helvetica, sans-serif",
-            headingSize: '32px',
-            bodySize: '16px'
-        };
-        modifiedMedia = {};
-        
-        // Reset UI selections
-        $('.removable-element').removeClass('selected');
-        $('.color-option').removeClass('selected');
-        $('.color-option[data-color="#4e73df"]').first().addClass('selected');
-        $('.color-option[data-color="#858796"]').eq(1).addClass('selected');
-        $('.color-option[data-color="#ffffff"]').eq(2).addClass('selected');
-        $('#customPrimaryColor').val('#4e73df');
-        $('#customSecondaryColor').val('#858796');
-        $('#customBgColor').val('#ffffff');
-        $('#headingFont').val("'Open Sans', sans-serif");
-        $('#bodyFont').val("'Helvetica Neue', Helvetica, sans-serif");
-        $('#headingSize').val(32);
-        $('#bodySize').val(16);
-        $('#headingSizeValue').text('32px');
-        $('#bodySizeValue').text('16px');
-        
-        // Reset media items UI
-        $('.media-item').removeClass('opacity-50');
-        $('.restore-media').text('Remove').removeClass('btn-outline-success').addClass('btn-outline-danger').removeClass('restore-media').addClass('remove-media');
-        
-        // Reload iframe to reset all changes
-        iframe.src = iframe.src;
-    });
-    
-    // Preview button
-    $('#previewBtn').click(function() {
-        console.log("Preview button clicked");
-        // Apply all customizations to a full page preview
-        alert('Preview would open a new tab with all customizations applied');
-    });
-    
-    // Generate ZIP button - FIXED VERSION
-    $('#generateZipBtn').click(function() {
-        console.log("Generate ZIP button clicked");
-        // Clear previous inputs
-        $('#zipForm').empty();
-        
-        // Add template_id
-        $('#zipForm').append(`<input type="hidden" name="template_id" value="${$('#zipForm').data('template-id') || 1}">`);
-        
-        // Add removed elements
-        removedElements.forEach(function(elementId) {
-            $('#zipForm').append(`<input type="hidden" name="customization[removed][]" value="${elementId}">`);
         });
         
-        // Add modified elements
-        for (const [elementId, modifications] of Object.entries(modifiedElements)) {
-            if (modifications.text) {
-                $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][text]" value="${modifications.text.replace(/"/g, '&quot;')}">`);
+        // Handle file upload
+        $('#uploadMedia').change(function() {
+            const file = this.files[0];
+            if(!file) return;
+            
+            const targetMedia = $(this).data('target-media');
+            console.log("File selected for upload:", file.name, "Target:", targetMedia);
+            
+            // In a real app, we would upload the file to the server here
+            // For demo purposes, we'll just simulate a successful upload
+            
+            // Store the media change
+            modifiedMedia[targetMedia] = {
+                action: 'replace',
+                newFile: file.name
+            };
+            
+            // Update UI to show the new file name
+            const mediaItem = $(`#mediaList span:contains("${targetMedia}")`).closest('.media-item');
+            
+            // Create a local preview of the image
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                mediaItem.find('img').attr('src', e.target.result);
+                
+                // Also update any instances in the iframe
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const images = iframeDoc.querySelectorAll(`img[src*="${targetMedia}"], img[alt="${targetMedia}"]`);
+                images.forEach(img => {
+                    img.src = e.target.result;
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Upload button click handler
+        $('#uploadBtn').click(function() {
+            $('#uploadMedia').click();
+        });
+        
+        // Reset button click handler
+        $('#resetBtn').click(function() {
+            console.log("Reset changes clicked");
+            
+            // Reset removed elements
+            removedElements.forEach(elementId => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const element = iframeDoc.getElementById(elementId);
+                if(element) {
+                    element.style.display = '';
+                }
+                
+                // Update UI
+                const elementItem = $(`.removable-element[data-element-id="${elementId}"]`);
+                elementItem.removeClass('removed');
+                elementItem.find('.btn-trash').removeClass('fa-undo').addClass('fa-trash-alt');
+            });
+            removedElements = [];
+            
+            // Reset colors
+            selectedColors = {
+                primary: '#4e73df',
+                secondary: '#858796',
+                background: '#ffffff'
+            };
+            $('#customPrimaryColor').val('#4e73df');
+            $('#customSecondaryColor').val('#858796');
+            $('#customBgColor').val('#ffffff');
+            
+            // Reset font selections
+            selectedFonts = {
+                heading: "'Open Sans', sans-serif",
+                body: "'Helvetica Neue', Helvetica, sans-serif",
+                headingSize: '32px',
+                bodySize: '16px'
+            };
+            $('#headingFont').val("'Open Sans', sans-serif");
+            $('#bodyFont').val("'Helvetica Neue', Helvetica, sans-serif");
+            $('#headingSize').val(32);
+            $('#headingSizeValue').text('32px');
+            $('#bodySize').val(16);
+            $('#bodySizeValue').text('16px');
+            
+            // Reset media changes
+            for(const mediaName in modifiedMedia) {
+                if(modifiedMedia[mediaName].action === 'remove') {
+                    // Restore hidden images
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const images = iframeDoc.querySelectorAll(`img[src*="${mediaName}"], img[alt="${mediaName}"]`);
+                    images.forEach(img => {
+                        img.style.display = '';
+                    });
+                    
+                    // Update UI
+                    const mediaItem = $(`#mediaList span:contains("${mediaName}")`).closest('.media-item');
+                    mediaItem.removeClass('removed');
+                    const button = mediaItem.find('button.restore-media');
+                    if(button.length) {
+                        button.text('Remove').removeClass('btn-outline-success restore-media').addClass('btn-outline-danger remove-media');
+                    }
+                }
+                // For replaced media, we'd need to reset to original images
+                // This would require saving original sources
             }
-            if (modifications.style) {
-                $('#zipForm').append(`<input type="hidden" name="customization[modified][${elementId}][style]" value="${modifications.style.replace(/"/g, '&quot;')}">`);
+            modifiedMedia = {};
+            
+            // Reload iframe to get a fresh start
+            iframe.src = iframe.src;
+        });
+        
+        // Preview button click handler
+        $('#previewBtn').click(function() {
+            console.log("Preview changes clicked");
+            
+            // Create a summary of changes
+            let summary = "Changes Preview:\n\n";
+            
+            if(removedElements.length > 0) {
+                summary += "Removed Elements:\n";
+                removedElements.forEach(id => {
+                    summary += `- ${id}\n`;
+                });
+                summary += "\n";
             }
+            
+            summary += "Selected Colors:\n";
+            summary += `- Primary: ${selectedColors.primary}\n`;
+            summary += `- Secondary: ${selectedColors.secondary}\n`;
+            summary += `- Background: ${selectedColors.background}\n\n`;
+            
+            summary += "Selected Fonts:\n";
+            summary += `- Heading: ${selectedFonts.heading} (${selectedFonts.headingSize})\n`;
+            summary += `- Body: ${selectedFonts.body} (${selectedFonts.bodySize})\n\n`;
+            
+            if(Object.keys(modifiedMedia).length > 0) {
+                summary += "Media Changes:\n";
+                for(const name in modifiedMedia) {
+                    if(modifiedMedia[name].action === 'remove') {
+                        summary += `- ${name}: Removed\n`;
+                    } else {
+                        summary += `- ${name}: Replaced with ${modifiedMedia[name].newFile}\n`;
+                    }
+                }
+            }
+            
+                
+                // Display summary in an alert (in a real app, this would be a nicer modal)
+                alert(summary);
+            });
+            
+            // Generate ZIP button click handler
+            $('#generateZipBtn').click(function() {
+                console.log("Generate ZIP clicked");
+                
+                // In a real app, we would submit this form with all the customization data
+                // For demo purposes, we'll simulate form submission with dummy data
+                
+                // Prepare form data
+                const form = $('#zipForm');
+                
+                // Clear any existing hidden inputs
+                form.find('input[type="hidden"]').not('[name="template_id"]').remove();
+                
+                // Add removed elements
+                if(removedElements.length > 0) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'removed_elements',
+                        value: JSON.stringify(removedElements)
+                    }).appendTo(form);
+                }
+                
+                // Add modified elements
+                if(Object.keys(modifiedElements).length > 0) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'modified_elements',
+                        value: JSON.stringify(modifiedElements)
+                    }).appendTo(form);
+                }
+                
+                // Add colors
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'colors',
+                    value: JSON.stringify(selectedColors)
+                }).appendTo(form);
+                
+                // Add fonts
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'fonts',
+                    value: JSON.stringify(selectedFonts)
+                }).appendTo(form);
+                
+                // Add media changes
+                if(Object.keys(modifiedMedia).length > 0) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'media_changes',
+                        value: JSON.stringify(modifiedMedia)
+                    }).appendTo(form);
+                }
+                
+                // Submit form
+                form.submit();
+            });
         }
-        
-        // Add colors
-        for (const [colorType, color] of Object.entries(selectedColors)) {
-            $('#zipForm').append(`<input type="hidden" name="customization[colors][${colorType}]" value="${color}">`);
-        }
-        
-        // Add fonts
-        for (const [fontType, fontValue] of Object.entries(selectedFonts)) {
-            $('#zipForm').append(`<input type="hidden" name="customization[fonts][${fontType}]" value="${fontValue.replace(/"/g, '&quot;')}">`);
-        }
-        
-        // Media modifications (would normally include file upload handling)
-        // For actual implementation, you'd need to use FormData and AJAX for file uploads
-        
-        console.log("Form data prepared:", $('#zipForm').serializeArray());
-        
-        // Submit the form
-        $('#zipForm').submit();
     });
-});
     </script>
-
 </body>
-
 </html>
+        
+       
+       
