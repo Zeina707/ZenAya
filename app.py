@@ -41,11 +41,11 @@ def customize_template1():
 
 @app.route('/customize/template2')
 def customize_template2():
-    return render_template('customize.html', template_id=2, template_path='views/template2/index.html')
+    return render_template('customize2.html', template_id=2, template_path='views/template2/index.html')
 
 @app.route('/customize/template3')
 def customize_template3():
-    return render_template('customize.html', template_id=3, template_path='views/template3/index.html')
+    return render_template('customize3.html', template_id=3, template_path='views/template3/index.html')
 
 # Générer et télécharger le ZIP du template personnalisé
 @app.route('/generate-zip', methods=['POST'])
