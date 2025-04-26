@@ -6,6 +6,7 @@ class User:
 
     def to_dict(self):
         return {
+            "_id":self._id,
             "name": self.name,
             "email": self.email,
             "password": self.password
@@ -13,4 +14,4 @@ class User:
 
     @staticmethod
     def from_dict(data):
-        return User(data["name"], data["email"], data["password"])
+        return User(data["_id"],data["name"], data["email"], data["password"])

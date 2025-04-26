@@ -912,7 +912,7 @@
 
                 <form id="zipForm" action="/generate-zip" method="post" style="display:none;">
 
-                    <input type="hidden" name="template_id" value="1">
+                    <input type="hidden" name="template_id" value="3">
 
                     <!-- Hidden inputs for customization options will be added dynamically -->
 
@@ -1455,7 +1455,7 @@ $(document).ready(function() {
         $('#zipForm').empty();
         
         // Add template_id
-        $('#zipForm').append(`<input type="hidden" name="template_id" value="${$('#zipForm').data('template-id') || 1}">`);
+        $('#zipForm').append(`<input type="hidden" name="template_id" value="${$('#zipForm').data('template-id') || 3}">`);
         
         // Add removed elements
         removedElements.forEach(function(elementId) {

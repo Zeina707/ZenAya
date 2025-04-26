@@ -1,6 +1,6 @@
 from flask import request, jsonify, session
 from flask_bcrypt import Bcrypt
-from DAO.user_dao import UserDAO
+from user_dao import UserDAO
 from models.users import User
 from pymongo import MongoClient
 

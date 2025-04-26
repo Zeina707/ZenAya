@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory, send_file
 from flask_bcrypt import Bcrypt
-from DAO.user_dao import UserDAO
+from user_dao import UserDAO
 import os
 import zipfile
 import io
@@ -224,51 +224,44 @@ def generate_zip():
     memory_file.seek(0)
     return send_file(memory_file, download_name=f'template{template_id}_personalisé.zip', as_attachment=True)
 
-# Route d'inscription
-@app.route('/register', methods=['POST'])
-def register():
-    name = request.form.get('name')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    if not name or not email or not password:
-        flash('Tous les champs sont requis', 'error')
-        return redirect(url_for('login'))
-    user_dao = UserDAO()
-    if user_dao.get_user_by_email(email):
-        flash('Cet email est déjà utilisé', 'error')
-        return redirect(url_for('login'))
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    user_dao.create_user(name, email, hashed_password)
-    flash('Compte créé avec succès ! Connectez-vous.', 'success')
-    return redirect(url_for('login'))
-
-# Route de connexion
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    login_path = os.path.join(app.root_path, 'templates', 'login.html')
-    if not os.path.exists(login_path):
-        return f"Le fichier login.html est introuvable à l'emplacement {login_path}"
-   
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        user_dao = UserDAO()
-        user = user_dao.authenticate_user(email, password)
-        if user:
-            session['user_id'] = str(user['_id'])
-            session['user_name'] = user['name']
-            flash('Connexion réussie !', 'success')
-            return redirect(url_for('index'))  # Rediriger vers la page d'accueil
-        else:
-            flash('Email ou mot de passe incorrect', 'error')
-    return render_template('login.html')  # Afficher le formulaire de login
+        email = request.form['email']
+        password = request.form['password']
 
-# Route de déconnexion
+        user = UserDAO.get_user_by_email(email)
+        if user and bcrypt.check_password_hash(user['password'], password):
+            session['user_id'] = str(user['_id'])  # Convertir l'ObjectId en chaîne
+            flash('Connexion réussie !', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Email ou mot de passe incorrect', 'danger')
+    return render_template('login.html')
+
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    name = request.form['name']
+    email = request.form['email']
+    password = request.form['password']
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    UserDAO.create_user(name, email, hashed_password)
+    flash('Compte créé avec succès ! Connectez-vous maintenant.', 'success')
+    return redirect(url_for('login'))
+
+
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Vous êtes déconnecté', 'success')
-    return redirect(url_for('login'))  # Rediriger vers la page de login après la déconnexion
+    flash('Vous avez été déconnecté.', 'info')
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
+
+
